@@ -3,7 +3,7 @@
 
 #define LOAD(x) surf = IMG_Load(x)
 #define CREATE_TEXT SDL_CreateTextureFromSurface(game.rend, surf)
-#define FREE_SURF SDL_FreeSurface(surf);
+#define FREE_SURF SDL_FreeSurface(surf)
 
 #define WIDTH 500
 #define HEIGHT 100
