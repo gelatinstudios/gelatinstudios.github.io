@@ -39,8 +39,24 @@ void loop(void *arg) {
         //input_handler
         SDL_Event event = {0};
         while(SDL_PollEvent(&event))
-                if(event.type == SDL_WINDOWEVENT_CLOSE || event.type == SDL_QUIT)
+                if(event.type == SDL_WINDOWEVENT_CLOSE || event.type == SDL_QUIT) {
+                        SDL_DestroyWindow(game->win);
+                        SDL_DestroyRenderer(game->rend);
+                        TTF_CloseFont(game->font);
+                        SDL_DestroyTexture(game->title);
+                        SDL_DestroyTexture(game->ship);
+                        SDL_DestroyTexture(game->bullet);
+                        for(size_t i = 0; i < 3; ++i)
+                                SDL_DestroyTexture(game->enemy_text[i]);
+                        SDL_DestroyTexture(game->exp);
+                        Mix_FreeChunk(game->laser);
+                        Mix_FreeChunk(game->explosion);
+                        TTF_Quit();
+                        IMG_Quit();
+                        Mix_Quit();
+                        SDL_Quit();
                         emscripten_cancel_main_loop();
+                }
         if(game->player_status == ALIVE) {
                 const Uint8 *state = SDL_GetKeyboardState(NULL);
                 if(state[SDL_SCANCODE_LEFT] && game->ship_rect.x > 0) game->ship_rect.x -= SHIP_VEL;
@@ -85,6 +101,7 @@ void loop(void *arg) {
                 if(game->player_status == ALIVE && !game->enemies[i].status && collision_detect(game->ship_rect, game->enemies[i].rect)) {
                         game->player_status = DYING_1;
                         game->player_death_timeout = EXPLOSION_TIMEOUT;
+                        ++game->deaths;
                         Mix_PlayChannel(-1, game->explosion, 0);
                 }
 
@@ -95,6 +112,7 @@ void loop(void *arg) {
                                 for(size_t k = j; k < game->gb_count - 1; ++k)
                                         game->gb[k] = game->gb[k+1];
                                 --game->gb_count;
+                                ++game->kills;
                                 Mix_PlayChannel(-1, game->explosion, 0);
                         }
                 }
@@ -137,6 +155,25 @@ void loop(void *arg) {
         //title
         SDL_RenderCopy(game->rend, game->title, NULL, &game->title_rect);
 
+        //K/D
+        char killstr[30] = {0};
+        sprintf(killstr, "kills: %zu", game->kills);
+        SDL_Surface *surf = TTF_RenderText_Blended(game->font, killstr, white);
+        SDL_Texture *kills_text = SDL_CreateTextureFromSurface(game->rend, surf);
+        FREE_SURF;
+        char deathstr[30] = {0};
+        sprintf(deathstr, "deaths: %zu", game->deaths);
+        surf = TTF_RenderText_Blended(game->font, deathstr, white);
+        SDL_Texture *deaths_text = SDL_CreateTextureFromSurface(game->rend, surf);
+        FREE_SURF;
+
+        SDL_Rect kills_rect = {20, 720-20-50, 200, 50};
+        SDL_Rect deaths_rect = {1280-20-200, 720-20-50, 200, 50};
+        SDL_RenderCopy(game->rend, kills_text, NULL, &kills_rect);
+        SDL_RenderCopy(game->rend, deaths_text, NULL, &deaths_rect);
+        SDL_DestroyTexture(kills_text);
+        SDL_DestroyTexture(deaths_text);
+
         //player
         if(game->player_status == ALIVE)
                 SDL_RenderCopy(game->rend, game->ship, NULL, &game->ship_rect);
@@ -168,7 +205,6 @@ int main(void) {
         game.rend = SDL_CreateRenderer(game.win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
         game.font = TTF_OpenFont("assets/prstart.ttf", 8);
-        SDL_Color const white = {255, 255, 255, 255};
         SDL_Surface *surf = TTF_RenderText_Blended(game.font, "Shmalaga", white);
         game.title = CREATE_TEXT;
         FREE_SURF;

@@ -65,8 +65,12 @@ typedef struct {
         Uint8 player_death_timeout;
 
         Enemy enemies[ENEMY_COUNT];
+
+        size_t kills;
+        size_t deaths;
 } Game;
 
-        enum {ALIVE, DYING_1, DYING_2, DYING_3, DYING_4, DEAD};
+SDL_Color const white = {255, 255, 255, 255};
+enum {ALIVE, DYING_1, DYING_2, DYING_3, DYING_4, DEAD};
 
 #endif
