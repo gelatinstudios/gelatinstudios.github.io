@@ -16,11 +16,6 @@
 
 #define DEGRAD(x) ((x) * (M_PI/180.0))
 
-void destroy_gb(SDL_Rect *gb, int n, int gb_count) {
-        for(size_t i = n; i < gb_count - 1; ++i)
-                gb[i] = gb[i+1];
-}
-
 Uint8 collision_detect(SDL_Rect rect1, SDL_Rect rect2) {
         Uint8 x = (rect1.x < rect2.x + rect2.w) && (rect1.x + rect1.w > rect2.x);
         Uint8 y = (rect1.y < rect2.y + rect2.h) && (rect1.y + rect1.h > rect2.y);
