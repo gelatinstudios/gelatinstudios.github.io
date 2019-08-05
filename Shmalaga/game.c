@@ -9,7 +9,7 @@
 #define HEIGHT 100
 
 #define SHIP_VEL 8
-#define ENEMY_VEL 6
+#define ENEMY_VEL 6.0
 #define BULLET_VEL 12
 #define BULLET_TIMEOUT 10
 #define EXPLOSION_TIMEOUT 4
