@@ -291,5 +291,5 @@ int main(void) {
 
         game.player_status = ALIVE;
 
-        emscripten_set_main_loop_arg(loop, &game, 60, 1);
+        emscripten_set_main_loop_arg(loop, &game, 0, 1);
 }
