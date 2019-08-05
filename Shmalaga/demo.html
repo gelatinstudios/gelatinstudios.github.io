@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+   <style>
+         body {
+                 background-color: black;
+                 color: white;
+         }
+        canvas.emscripten {
+                 border: 0px none;
+                 margin-left:auto;
+                 margin-right:auto;
+                 display:block;
+         }
+   </style>
+    <body>
+        <center><canvas id="canvas"></canvas></center>
+        <script type='text/javascript'>
+                var Module = {
+                        canvas: (function() {
+                                var canvas = document.getElementById('canvas');
+                                return canvas;
+                        })()
+                };
+               (function() {
+                 var memoryInitializer = 'game.js.mem';
+                 if (typeof Module['locateFile'] === 'function') {
+                   memoryInitializer = Module['locateFile'](memoryInitializer);
+                 } else if (Module['memoryInitializerPrefixURL']) {
+                   memoryInitializer = Module['memoryInitializerPrefixURL'] + memoryInitializer;
+                 }
+                 var xhr = Module['memoryInitializerRequest'] = new XMLHttpRequest();
+                 xhr.open('GET', memoryInitializer, true);
+                 xhr.responseType = 'arraybuffer';
+                 xhr.send(null);
+                })();
+               </script>
+               <script>
+               var script = document.createElement('script');
+               script.src = "game.js";
+               document.body.appendChild(script);
+       </script>
+    </body>
+</html>
