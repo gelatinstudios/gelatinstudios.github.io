@@ -128,7 +128,7 @@ void loop(void *arg) {
 
         //automata
         for(size_t i = 0; i < ENEMY_COUNT; ++i) {
-                if(game->enemies[i].status == DEAD) continue;
+                if(game->enemies[i].status != ALIVE) continue;
                 game->enemies[i].rect.x -= rint(ENEMY_VEL * cos(DEGRAD(game->enemies[i].angle)));
                 game->enemies[i].rect.y -= rint(ENEMY_VEL * sin(DEGRAD(game->enemies[i].angle)));
                 game->enemies[i].angle += 3;
