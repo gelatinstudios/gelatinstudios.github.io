@@ -17,7 +17,7 @@ static inline void render_stars(Star stars[MAX_STARS], SDL_Renderer *rend) {
 }
 
 int intro(Star stars[MAX_STARS], SDL_Renderer *rend, TTF_Font *font) {
-        SDL_Surface *surf = IMG_Load("sprites/mascot.png");
+        SDL_Surface *surf = IMG_Load("assets/sprites/mascot.png");
         if(!surf) {
                 fprintf(stderr, "error loading \"mascot.png\":\n\t%s\n", IMG_GetError());
                 return 1;

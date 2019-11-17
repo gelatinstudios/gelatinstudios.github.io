@@ -218,7 +218,7 @@ int init_winrend(WinRend *winrend) {
         SDL_RenderSetLogicalSize(winrend->rend, 1280, 720);
         SDL_ShowCursor(SDL_DISABLE);
 
-        SDL_Surface *icon = IMG_Load("sprites/mascot.png");
+        SDL_Surface *icon = IMG_Load("assets/sprites/mascot.png");
         SDL_SetWindowIcon(winrend->win, icon);
         SDL_FreeSurface(icon);
 
