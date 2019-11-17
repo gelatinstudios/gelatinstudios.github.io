@@ -11,7 +11,7 @@ int err = 0;
 
 int load_assets(SDL_Renderer *rend, Assets *assets) {
         puts("loading font...");
-        assets->font = TTF_OpenFont("prstart.ttf", 8);
+        assets->font = TTF_OpenFont("assets/prstart.ttf", 8);
         if(!assets->font) {
                 fprintf(stderr, "error loading font:\n\t%s\n", TTF_GetError());
                 return 1;
