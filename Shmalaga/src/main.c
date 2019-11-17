@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
         if(err) error("render intro", &winrend, &assets);
 
         Everything everything = {&data, &winrend, &assets};
-        emscripten_set_main_loop_arg(loop, &everything, 60, 1);
+        emscripten_set_main_loop_arg(loop, &everything, 0, 1);
 }
 
 void loop(void *arg) {
