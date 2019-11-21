@@ -1,7 +1,7 @@
 #include "essentials.h"
 
 #define LEVEL 1
-#define LIVES 3
+#define LIVES 4
 
 static inline const char *title_generator(void);
 
