@@ -2,22 +2,11 @@
 
 #define SHIP_VEL 8
 //#define ONE_UP 250000U
-#define ONE_UP 100000U
 
-static inline int input_handler(GameData *, SDL_Window *, Sounds *);
-static inline void action_handler(GameData *, Sounds *);
-static inline void enemy_handler(GameData *, Enemy *, Mix_Chunk *);
-static inline void player_death(GameData *, Mix_Chunk *);
+
 static void reset(GameData *, Mix_Music *);
 
-int handler(GameData *data, SDL_Window *win, Sounds *sounds) {
-        int quit = input_handler(data, win, sounds);
-        action_handler(data, sounds);
-
-        return quit;
-}
-
-static inline int input_handler(GameData *data, SDL_Window *win, Sounds *sounds) {
+int handler(GameData *data, WinRend *winrend, Assets *assets) {
         int quit = 0;
 
         if(data->gamestate == IN_GAME && data->lives && (data->player_status == ALIVE || data->player_status == DEAD)) {
@@ -29,7 +18,7 @@ static inline int input_handler(GameData *data, SDL_Window *win, Sounds *sounds)
                 if(state[data->keys[SLOW_K]]) vel /= 2;
                 if(state[data->keys[SHOOT_K]] && !data->bullet_timeout) {
                         create_gb(data);
-                        if(!data->muted) play_sound(sounds->sfx[SND_LASER], data->ship.x + data->ship.w, SND_LASER);
+                        if(!data->muted) play_sound(assets->sounds.sfx[SND_LASER], data->ship.x + data->ship.w, SND_LASER);
                 }
                 if(state[data->keys[LEFT_K]] && data->ship.x > 0) data->ship.x -= vel;
                 if(state[data->keys[RIGHT_K]] && data->ship.x < 1280 - data->ship.w) data->ship.x += vel;
@@ -48,7 +37,7 @@ static inline int input_handler(GameData *data, SDL_Window *win, Sounds *sounds)
                         if(pressed == data->keys[MENU_K] && data->gamestate < MENU) {
                                 data->gamestate = MENU;
                                 Mix_PauseMusic();
-                                //Mix_PlayMusic(sounds->pause_music, -1);
+                                //Mix_PlayMusic(assets->sounds.pause_music, -1);
                                 break;
                         //}
                         // else if(pressed == data->keys[PAUSE_K]) {
@@ -65,11 +54,11 @@ static inline int input_handler(GameData *data, SDL_Window *win, Sounds *sounds)
                                 else Mix_ResumeMusic();
                         } else if(pressed == data->keys[FSCREEN_K]) {
                                 //data->gamestate = PAUSED;
-                                SDL_SetWindowFullscreen(win, data->fullscreen ? 0 : SDL_WINDOW_FULLSCREEN);
+                                SDL_SetWindowFullscreen(winrend->win, data->fullscreen ? 0 : SDL_WINDOW_FULLSCREEN);
                                 data->fullscreen = !data->fullscreen;
-                        } else if(pressed == data->keys[RESET_K]) reset(data, sounds->main_music);
+                        } else if(pressed == data->keys[RESET_K]) reset(data, assets->sounds.main_music);
                         else if((pressed == SDLK_RETURN && data->gamestate == IN_GAME) && ((data->level == 7 && data->boss.status == DEAD) || !data->lives)) {
-                                Mix_PlayMusic(sounds->pause_music, -1);
+                                Mix_PlayMusic(assets->sounds.pause_music, -1);
                                 if(data->muted) Mix_PauseMusic();
                                 if(data->score.val > data->leaderboard[9].val) {
                                         data->gamestate = NAME_ENTRY;
@@ -81,10 +70,10 @@ static inline int input_handler(GameData *data, SDL_Window *win, Sounds *sounds)
                         }
                 }
 
-                if(data->gamestate == NAME_ENTRY) name_handler(data, &event);
+                if(data->gamestate == NAME_ENTRY) name_handler(data, winrend->rend, assets->font, &event, assets->textures.leaderboard_texts);
                 else if(data->gamestate == LEADERBOARD) {
-                        if(pressed == SDLK_RETURN) reset(data, sounds->main_music);
-                } else if(data->gamestate >= MENU) quit |= menu_handler(data, sounds->sfx, &event);
+                        if(pressed == SDLK_RETURN) reset(data, assets->sounds.main_music);
+                } else if(data->gamestate >= MENU) quit |= menu_handler(data, assets->sounds.sfx, &event);
                 else if(data->gamestate == STARTING_SCREEN) {
                         if(data->selected == 10) data->secret |= data->secret >> 4;
 
@@ -98,7 +87,7 @@ static inline int input_handler(GameData *data, SDL_Window *win, Sounds *sounds)
                                 }
                         } else if(pressed == SDLK_RETURN) {
                                 data->gamestate = IN_GAME;
-                                Mix_PlayMusic(sounds->main_music, -1);
+                                Mix_PlayMusic(assets->sounds.main_music, -1);
                                 data->selected = 0;
                                 if(data->secret & 0x04) {
                                         data->ship.w = 12;
@@ -123,129 +112,6 @@ static inline int input_handler(GameData *data, SDL_Window *win, Sounds *sounds)
 
 
         return quit;
-}
-
-static inline void action_handler(GameData *data, Sounds *sounds) {
-        if(data->gamestate != IN_GAME) return;
-
-        //all enemies dead
-        if(!data->living_enemies && data->level <= 7) {
-                ++data->level;
-                load_level(data);
-
-                if(data->level == 7) {
-                        Mix_PlayMusic(sounds->boss_music, -1);
-                        if(data->muted) Mix_PauseMusic();
-                }
-        }
-
-        //player death sprite update
-        if(data->player_status > ALIVE && data->player_status < DEAD) {
-                if(!data->player_death_timeout) {
-                        ++data->player_status;
-                        if(data->player_status == DEAD && data->lives) {
-                                 --data->lives;
-                                 data->respawn_timeout = RESPAWN_TIMEOUT;
-                        }
-                        data->player_death_timeout = EXPLOSION_TIMEOUT;
-                } else --data->player_death_timeout;
-        }
-
-        for(size_t i = 0; i < data->enemy_count; ++i)
-                enemy_handler(data, &data->enemies[i], sounds->sfx[SND_EXP]);
-
-        enemy_handler(data, &data->gold_enemy, sounds->sfx[SND_EXP]);
-
-        //enemy bullet hits player
-        for(size_t i = 0; i < data->bb_count; ++i)
-                if(data->player_status == ALIVE && collision_detect(data->ship, MK_BB_RECT(data->bb[i].point)))
-                        player_death(data, sounds->sfx[SND_EXP]);
-
-        //boss
-        for(size_t i = 0; i < data->gb_count; ++i) {
-                if(data->boss.status == ALIVE && collision_detect(MK_GB_RECT(data->gb[i]), data->boss.rect)) {
-                        --data->boss.hp;
-                        data->score.val += 5;
-                        data->boss.damage_timeout = DAMAGE_TIMEOUT;
-                        destroy_gb(data, i);
-                }
-        }
-        if(data->player_status == ALIVE && data->boss.status == ALIVE && collision_detect(data->ship, data->boss.rect))
-                player_death(data, sounds->sfx[SND_EXP]);
-        if(data->boss.status == ALIVE && !data->boss.hp) {
-                data->boss.status = DYING_1;
-                //data->boss.explosion_timeout = BOSS_EXPLOSION_TIMEOUT;
-                data->boss.new_exp_timeout = NEW_EXP_TIMEOUT;
-                //if(!data->muted) Mix_PlayChannel(-1, sounds->explosion, 0);
-                data->score.won = 1;
-        }
-        if(data->boss.status > ALIVE && data->boss.status < DEAD) {
-                if(data->boss.new_exp_timeout) {
-                        if(!(data->boss.new_exp_timeout % NEW_EXP_SCALE)) {
-                                const size_t i = (data->boss.new_exp_timeout / NEW_EXP_SCALE) - 1;
-                                data->boss.explosions[i].rect.x = rng(data->boss.rect.w - data->boss.explosions[i].rect.w) + data->boss.rect.x;
-                                data->boss.explosions[i].rect.y = rng(data->boss.rect.h - data->boss.explosions[i].rect.h) + data->boss.rect.y;
-                                data->boss.explosions[i].timeout = EXPLOSION_TIMEOUT * 4;
-                        }
-                        --data->boss.new_exp_timeout;
-                        if(!data->boss.new_exp_timeout) data->boss.explosion_timeout = BOSS_EXPLOSION_TIMEOUT;
-                } else if(data->boss.explosion_timeout) {
-                        --data->boss.explosion_timeout;
-                } else {
-                        ++data->boss.status;
-                        data->boss.explosion_timeout = BOSS_EXPLOSION_TIMEOUT;
-                }
-
-                for(size_t i = 0; i < NUM_EXP; ++i) {
-                        if(data->boss.explosions[i].timeout) --data->boss.explosions[i].timeout;
-                }
-        }
-
-        //respawn
-        if(data->player_status == DEAD && data->lives) {
-                if(!data->respawn_timeout) data->player_status = ALIVE;
-                else --data->respawn_timeout;
-        }
-
-        //1UP
-        if(data->score.val >= ONE_UP * (data->life_milestone + 1)) {
-                ++data->lives;
-                ++data->life_milestone;
-                data->one_up_timeout = ONE_UP_TIMEOUT;
-                if(!data->muted) Mix_PlayChannel(SND_CHRD+2, sounds->sfx[SND_CHRD], 0);
-        }
-
-        //delete off-screen bullets
-        if(data->gb[0].x >= 1280 && data->gb_count) destroy_gb(data, 0);
-}
-
-static inline void player_death(GameData *data, Mix_Chunk *explosion) {
-        data->player_status = DYING_1;
-        data->player_death_timeout = EXPLOSION_TIMEOUT;
-        if(!data->muted) play_sound(explosion, data->ship.x + data->ship.w/2, SND_EXP);
-}
-
-static inline void enemy_handler(GameData *data, Enemy *enemy, Mix_Chunk *explosion) {
-        if(data->player_status == ALIVE && enemy->status == ALIVE && collision_detect(data->ship, enemy->rect))
-                player_death(data, explosion);
-
-        for(size_t i = 0; i < data->gb_count; ++i) {
-                if(enemy->status == ALIVE && collision_detect(MK_GB_RECT(data->gb[i]), enemy->rect)) {
-                        enemy->status = DYING_1;
-                        enemy->explosion_timeout = EXPLOSION_TIMEOUT;
-                        destroy_gb(data, i);
-                        if(!data->muted) play_sound(explosion, enemy->rect.x + enemy->rect.w/2, SND_EXP);
-                        if(enemy->texture == SPR_GOLD_ENEMY) data->score.val += 2*ENEM_P;
-                        else data->score.val += ENEM_P / pow(2, data->enemies[i].passes);
-                }
-        }
-        if(data->gamestate == IN_GAME && enemy->status > ALIVE && enemy->status < DEAD) {
-                if(!enemy->explosion_timeout) {
-                        ++enemy->status;
-                        if(enemy->status == DEAD && enemy->texture != SPR_GOLD_ENEMY) --data->living_enemies;
-                        enemy->explosion_timeout = EXPLOSION_TIMEOUT;
-                } else --enemy->explosion_timeout;
-        }
 }
 
 static void reset(GameData *data, Mix_Music *music) {

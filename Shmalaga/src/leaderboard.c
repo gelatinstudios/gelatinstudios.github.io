@@ -1,8 +1,6 @@
 #include "essentials.h"
 
-static inline void render_entry(const Score *, SDL_Renderer *, TTF_Font *, SDL_Rect *, size_t, int);
-
-void name_handler(GameData *data, SDL_Event *event) {
+void name_handler(GameData *data, SDL_Renderer *rend, TTF_Font *font, SDL_Event *event, SDL_Texture *texts[10]) {
         const char *keyname;
         switch(event->key.keysym.sym) {
                 case SDLK_UP:           data->score.name[data->selected] = (data->score.name[data->selected] - 1 + 26 - 'A') % 26 + 'A'; break;
@@ -10,7 +8,7 @@ void name_handler(GameData *data, SDL_Event *event) {
                 case SDLK_RIGHT:        data->selected = (data->selected + 1) % 3; break;
                 case SDLK_LEFT:         data->selected = (data->selected - 1 + 3) % 3; break;
                 case SDLK_RETURN:       data->selected = 0;
-                                        data->player_score_index = scores_update(data->leaderboard, data->score);
+                                        data->player_score_index = scores_update(data->leaderboard, data->score, rend, font, texts);
                                         data->gamestate = LEADERBOARD;
                                         break;
 
@@ -20,61 +18,46 @@ void name_handler(GameData *data, SDL_Event *event) {
         }
 }
 
-void render_name(GameData *data, SDL_Renderer *rend, SDL_Texture *texts[], TTF_Font *font) {
+void render_name(GameData *data, SDL_Renderer *rend, Textures *texts) {
         const SDL_Rect title = {(1280 - 1100) / 2, 50, 1100, 125};
-        SDL_RenderCopy(rend, texts[TXT_MADE], NULL, &title);
+        SDL_RenderCopy(rend, texts->texts[TXT_MADE], NULL, &title);
 
         SDL_Rect rect = {(1280 - 75) / 2 - 2*150, (720 - 200) / 2, 75, 200};
         for(size_t i = 0; i < 3; ++i) {
-                char letter_str[] = {data->score.name[i], 0};
-                SDL_Surface *surf;
-                if(data->selected == i) surf = TTF_RenderText_Blended(font, letter_str, gold);
-                else surf = TTF_RenderText_Blended(font, letter_str, white);
                 rect.x += 150;
-                render_surf(rend, surf, &rect);
+                if (i == data->selected) {
+                        SDL_SetTextureColorMod(texts->white_letters[data->score.name[i] - 'A'], 255, 215, 0);
+                        SDL_RenderCopy(rend, texts->white_letters[data->score.name[i] - 'A'], NULL, &rect);
+                        SDL_SetTextureColorMod(texts->white_letters[data->score.name[i] - 'A'], 255, 255, 255);
+                } else SDL_RenderCopy(rend, texts->white_letters[data->score.name[i] - 'A'], NULL, &rect);
         }
 
         const SDL_Rect enter_name = {(1280 - 1000) / 2, 600, 1000, 75};
-        SDL_RenderCopy(rend, texts[TXT_ENTER_NAME], NULL, &enter_name);
-
-        SDL_RenderPresent(rend);
+        SDL_RenderCopy(rend, texts->texts[TXT_ENTER_NAME], NULL, &enter_name);
 }
 
-void render_leaderboard(Score scores[], SDL_Renderer *rend, SDL_Texture *texts[], TTF_Font *font, size_t player_score_index) {
+void render_leaderboard(Score scores[], SDL_Renderer *rend, Textures *texts, size_t player_score_index) {
         const SDL_Rect title = {(1280 - 700) / 2, 50, 700, 100};
-        SDL_RenderCopy(rend, texts[TXT_LDRBRD], NULL, &title);
+        SDL_RenderCopy(rend, texts->texts[TXT_LDRBRD], NULL, &title);
 
         SDL_Rect rect = {50, 75, 0, 50};
         for(size_t i = 0; i < 10; ++i) {
                 if(i == 5) {
                         rect.x = 1280/2 + 50;
                         rect.y = 75;
-                } else if(i == 9) rect.x -= 30;
+                } else if(i == 9) {
+                        rect.x -= 30;
+                }
                 rect.y += 100;
-                render_entry(&scores[i], rend, font, &rect, i, player_score_index == i);
+                rect.w = 30 * (9 + digits(scores[i].val));
+                if(i == 9) rect.w += 30;
+                if (i == player_score_index) {
+                        SDL_SetTextureColorMod(texts->leaderboard_texts[i], 255, 215, 0);
+                        SDL_RenderCopy(rend, texts->leaderboard_texts[i], NULL, &rect);
+                        SDL_SetTextureColorMod(texts->leaderboard_texts[i], 255, 255, 255);
+                } else SDL_RenderCopy(rend, texts->leaderboard_texts[i], NULL, &rect);
         }
-
 
         SDL_Rect press_enter_rect = {(1280 - 250) / 2, 650, 250, 50};
-        SDL_RenderCopy(rend, texts[TXT_PRESSR], NULL, &press_enter_rect);
-
-        SDL_RenderPresent(rend);
-}
-
-static inline void render_entry(const Score *score, SDL_Renderer *rend, TTF_Font *font, SDL_Rect *rect, size_t n, int current_player) {
-        char name[4] = {0};
-        if(!score->name[0])
-                strcpy(name, "---");
-        else {
-                name[0] = score->name[0];
-                name[1] = score->name[1];
-                name[2] = score->name[2];
-        }
-
-        char str[30] = {0};
-        sprintf(str, "%c%c%zu %s: %u", score->won ? 'W' : ' ', ' ', n+1, name, score->val);
-        rect->w = strlen(str) * 30;
-        SDL_Surface *surf = TTF_RenderText_Blended(font, str, current_player ? gold : white);
-        assert(surf);
-        render_surf(rend, surf, rect);
+        SDL_RenderCopy(rend, texts->texts[TXT_PRESSR], NULL, &press_enter_rect);
 }

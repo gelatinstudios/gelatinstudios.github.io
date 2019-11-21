@@ -208,9 +208,6 @@ void render_menu(GameData *data, SDL_Renderer *rend, TTF_Font *font, SDL_Texture
                         break;
                 }
         }
-
-        SDL_RenderPresent(rend);
-        SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
 }
 
 static inline void render_as_selected(SDL_Renderer *rend, SDL_Texture *text, const SDL_Rect *rect) {

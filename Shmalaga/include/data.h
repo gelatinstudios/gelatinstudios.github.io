@@ -113,7 +113,7 @@ typedef struct {
 
         Score leaderboard[10];
         Score score;
-        size_t player_score_index;
+        Uint8 player_score_index;
 
         Uint8 lives;
         Uint8 respawn_timeout;

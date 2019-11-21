@@ -1,14 +1,14 @@
 #include "essentials.h"
 
 #define LEVEL 1
-#define LIVES 4
+#define LIVES 3
 
 static inline const char *title_generator(void);
 
 const SDL_Color white = {255, 255, 255, 255};
 const SDL_Color black = {0, 0, 0, 255};
 const SDL_Color gold = {255, 215, 0, 255};
-
+//
 const SDL_Keycode lsd_code[] = {
         SDLK_UP,
         SDLK_UP,
@@ -78,6 +78,7 @@ const SDL_Rect boss_clips[4] = {
 };
 
 int init_data(GameData *data) {
+        //CNT_START;
         puts("initializing data...");
         data->keys[UP_K] = SDL_SCANCODE_UP;
         data->keys[DOWN_K] = SDL_SCANCODE_DOWN;
@@ -120,7 +121,7 @@ int init_data(GameData *data) {
                 data->stars[i].rect.y = rng(721);
                 data->stars[i].rect.h = data->stars[i].rect.w = 3 + rng(2);
 
-                Uint8 n = 1 + rng(100);
+                Uint8 n = 1u + rng(100);
                 if(n <= 80) { //white
                         data->stars[i].color.r = 255;
                         data->stars[i].color.g = 255;
@@ -201,6 +202,8 @@ int init_data(GameData *data) {
         //         data->bb[i].rect.w = 12;
         //         data->bb[i].rect.h = 8;
         // }
+
+        //CNT_PRINT;
         return 0;
 }
 
@@ -218,7 +221,7 @@ int init_winrend(WinRend *winrend) {
         SDL_RenderSetLogicalSize(winrend->rend, 1280, 720);
         SDL_ShowCursor(SDL_DISABLE);
 
-        SDL_Surface *icon = IMG_Load("assets/sprites/mascot.png");
+        SDL_Surface *icon = IMG_Load("sprites/mascot.png");
         SDL_SetWindowIcon(winrend->win, icon);
         SDL_FreeSurface(icon);
 
