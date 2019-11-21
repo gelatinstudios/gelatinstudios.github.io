@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
         // if(err) error("render intro", &winrend, &assets);
 
         Everything everything = {&data, &winrend, &assets};
-        emscripten_set_main_loop_arg(loop, &everything, 0, 1);
+        emscripten_set_main_loop_arg(loop, &everything, 60, 1);
 }
 
 void loop(void *arg) {
@@ -72,9 +72,9 @@ void loop(void *arg) {
                 clean(winrend, assets);
                 emscripten_cancel_main_loop();
         }
-
-        if(1000/FPS > SDL_GetTicks() - starting_tick)
-                SDL_Delay(1000/FPS  - (SDL_GetTicks() - starting_tick));
+        //
+        // if(1000/FPS > SDL_GetTicks() - starting_tick)
+        //         SDL_Delay(1000/FPS  - (SDL_GetTicks() - starting_tick));
 }
 
 static inline void error(const char *str, WinRend *winrend, Assets *assets) {
