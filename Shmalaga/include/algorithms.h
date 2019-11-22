@@ -38,6 +38,7 @@ static inline Uint32 rng(int n) {
 
 static inline size_t digits(unsigned n) {
         //QUESTION: is there a better way to do this?
+        if(!n) return 1;
         size_t i = 0;
         while (n) {
                 n /= 10;

@@ -162,19 +162,19 @@ static inline SDL_Texture *create_sparkle(SDL_Renderer *rend) {
 static inline void load_sounds(Sounds *sounds) {
         Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
 
-        sounds->main_music = Mix_LoadMUS("assets/sounds/music_1.ogg");
+        sounds->main_music = Mix_LoadMUS("assets/sounds/music_1.wav");
         if(!sounds->main_music)
                 fprintf(stderr, "error loading main_music:\n\t%s\n", Mix_GetError());
 
-        sounds->pause_music = Mix_LoadMUS("assets/sounds/waiting.ogg");
+        sounds->pause_music = Mix_LoadMUS("assets/sounds/waiting.wav");
         if(!sounds->pause_music)
                 fprintf(stderr, "error loading pause_music:\n\t%s\n", Mix_GetError());
 
-        sounds->boss_music = Mix_LoadMUS("assets/sounds/bossbattle.ogg");
+        sounds->boss_music = Mix_LoadMUS("assets/sounds/bossbattle.wav");
         if(!sounds->boss_music)
                 fprintf(stderr, "error loading boss_music:\n\t%s\n", Mix_GetError());
 
-        const char *sfx[] = {"laser.ogg", "badlaser.ogg", "newexplosion2.ogg", "thunk.ogg", "lowerthunk.ogg", "powerchord.ogg"};
+        const char *sfx[] = {"laser.wav", "badlaser.wav", "expl.wav", "thunk.wav", "lowerthunk.wav", "powerchord.wav"};
         for(size_t i = 0; i < LNGTH(sounds->sfx); ++i)
                 sounds->sfx[i] = sound_load(sfx[i]);
 }

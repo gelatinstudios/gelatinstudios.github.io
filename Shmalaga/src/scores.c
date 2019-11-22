@@ -28,7 +28,6 @@ size_t scores_update(Score scores[10], Score score, SDL_Renderer *rend, TTF_Font
         for (size_t j = i; j < 10; ++j) {
                 SDL_ClearError();
                 SDL_DestroyTexture(texts[j]);
-                printf("error at %zu: %s\n", j, SDL_GetError());
                 texts[j] = make_score_texture(rend, font, &scores[j], j);
         }
 

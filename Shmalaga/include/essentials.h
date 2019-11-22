@@ -80,7 +80,7 @@ void load_level(GameData *);
 
 void automata(GameData *, Sounds *sounds);
 
-void update(GameData *data, SDL_Renderer *rend, Sounds *sounds, SDL_Texture *score_text, TTF_Font *font);
+void update(GameData *data, SDL_Renderer *rend, Sounds *sounds, SDL_Texture **score_text, TTF_Font *font);
 
 void render(GameData *, SDL_Renderer *, Assets *);
 

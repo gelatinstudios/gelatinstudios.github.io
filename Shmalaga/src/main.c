@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
         SDL_Init(SDL_INIT_EVERYTHING);
         TTF_Init();
-        Mix_Init(MIX_INIT_OGG);
+        //Mix_Init();
 
         srand(time(NULL));
 
@@ -61,7 +61,7 @@ void loop(void *arg) {
         Uint32 starting_tick = SDL_GetTicks();
 
         const bool quit = handler(data, winrend, assets);
-        update(data, winrend->rend, &assets->sounds, assets->textures.score_texts[SCORE_TXT], assets->font);
+        update(data, winrend->rend, &assets->sounds, &assets->textures.score_texts[SCORE_TXT], assets->font);
         automata(data, &assets->sounds);
         render(data, winrend->rend, assets);
 
