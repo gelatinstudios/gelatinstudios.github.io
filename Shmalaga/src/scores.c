@@ -3,8 +3,8 @@
 void load_scores(Score scores[10]) {
         FILE *file = fopen("assets/scores.dat", "rb");
         if(!file) return;
-        size_t n = fread(scores, sizeof(Score), 10, file);
-        assert(n == 10);
+        fread(scores, sizeof(Score), 10, file);
+        //assert(n == 10);
         fclose(file);
 }
 
