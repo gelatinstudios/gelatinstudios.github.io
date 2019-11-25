@@ -15,7 +15,7 @@ int err = 0;
 
 int load_assets(SDL_Renderer *rend, Assets *assets, Score leaderboard[10]) {
         puts("loading font...");
-        assets->font = TTF_OpenFont("prstart.ttf", 8);
+        assets->font = TTF_OpenFont("assets/prstart.ttf", 8);
         if(!assets->font) {
                 fprintf(stderr, "error loading font:\n\t%s\n", TTF_GetError());
                 return 1;
@@ -115,7 +115,7 @@ static inline SDL_Texture *text_load(SDL_Renderer *rend, TTF_Font *font, const c
 }
 
 static inline SDL_Texture *sprite_load(SDL_Renderer *rend, const char *img) {
-        char filepath[25] = "sprites/";
+        char filepath[25] = "assets/sprites/";
         strcat(filepath, img);
         SDL_Surface *surf = IMG_Load(filepath);
         if(!surf) {
@@ -175,15 +175,15 @@ static inline SDL_Texture *create_sparkle(SDL_Renderer *rend) {
 static inline void load_sounds(Sounds *sounds) {
         Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
 
-        sounds->main_music = Mix_LoadMUS("sounds/music_1.ogg");
+        sounds->main_music = Mix_LoadMUS("assets/sounds/music_1.ogg");
         if(!sounds->main_music)
                 fprintf(stderr, "error loading main_music:\n\t%s\n", Mix_GetError());
 
-        sounds->pause_music = Mix_LoadMUS("sounds/waiting.ogg");
+        sounds->pause_music = Mix_LoadMUS("assets/sounds/waiting.ogg");
         if(!sounds->pause_music)
                 fprintf(stderr, "error loading pause_music:\n\t%s\n", Mix_GetError());
 
-        sounds->boss_music = Mix_LoadMUS("sounds/bossbattle.ogg");
+        sounds->boss_music = Mix_LoadMUS("assets/sounds/bossbattle.ogg");
         if(!sounds->boss_music)
                 fprintf(stderr, "error loading boss_music:\n\t%s\n", Mix_GetError());
 
@@ -193,7 +193,7 @@ static inline void load_sounds(Sounds *sounds) {
 }
 
 static inline Mix_Chunk *sound_load(const char *file) {
-        char filepath[25] = "sounds/";
+        char filepath[25] = "assets/sounds/";
         strcat(filepath, file);
         Mix_Chunk *chunk = Mix_LoadWAV(filepath);
         if(!chunk)
