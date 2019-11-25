@@ -1,6 +1,6 @@
 #include "essentials.h"
 
-void name_handler(GameData *data, SDL_Renderer *rend, TTF_Font *font, SDL_Event *event, SDL_Texture *texts[10]) {
+void name_handler(GameData *data, SDL_Renderer *rend, TTF_Font *font, SDL_Event *event, SDL_Texture *texts[10], SDL_Texture *score_texts[2]) {
         const char *keyname;
         switch(event->key.keysym.sym) {
                 case SDLK_UP:           data->score.name[data->selected] = (data->score.name[data->selected] - 1 + 26 - 'A') % 26 + 'A'; break;
@@ -8,7 +8,13 @@ void name_handler(GameData *data, SDL_Renderer *rend, TTF_Font *font, SDL_Event 
                 case SDLK_RIGHT:        data->selected = (data->selected + 1) % 3; break;
                 case SDLK_LEFT:         data->selected = (data->selected - 1 + 3) % 3; break;
                 case SDLK_RETURN:       data->selected = 0;
+                                        if(data->score.val > data->leaderboard[0].val) {
+                                                SDL_DestroyTexture(score_texts[HSCORE_TXT]);
+                                                score_texts[HSCORE_TXT] = make_highscore_text(rend, font, data->score.val);
+                                        }
                                         data->player_score_index = scores_update(data->leaderboard, data->score, rend, font, texts);
+                                        SDL_DestroyTexture(score_texts[SCORE_TXT]);
+                                        score_texts[SCORE_TXT] = make_score_text(rend, font, 0);
                                         data->gamestate = LEADERBOARD;
                                         break;
 

@@ -97,9 +97,8 @@ int init_data(GameData *data) {
         data->fullscreen = 0;
         data->muted = 0;
 
-        data->volumes.master = MIX_MAX_VOLUME / 2;
-        data->volumes.music = MIX_MAX_VOLUME / 2;
-        data->volumes.sfx = MIX_MAX_VOLUME / 2;
+        for(size_t i = 0; i < LNGTH(data->volumes); ++i)
+                data->volumes[i] = MIX_MAX_VOLUME / 2;
 
         data->gamestate = STARTING_SCREEN;
         data->level = LEVEL-1;

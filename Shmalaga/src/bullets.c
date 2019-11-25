@@ -8,7 +8,7 @@ void create_gb(GameData *data) {
 }
 
 void destroy_gb(GameData *data, size_t n) {
-        for(size_t i = n; i < data->gb_count - 1; ++i)
+        for(size_t i = n; i < data->gb_count - 1U; ++i)
                 data->gb[i] = data->gb[i+1];
         --data->gb_count;
 }
@@ -25,7 +25,7 @@ void create_bb(GameData *data, const SDL_Rect *rect, double angle) {
 }
 
 void destroy_bb(GameData *data, size_t n) {
-        for(size_t i = n; i < data->bb_count - 1; ++i)
+        for(size_t i = n; i < data->bb_count - 1U; ++i)
                 data->bb[i] = data->bb[i+1];
         --data->bb_count;
 }

@@ -7,15 +7,23 @@ enum {SPR_SHIP, SPR_ENEMY, SPR_ENEMY1, SPR_ENEMY2, SPR_ENEMY3, SPR_GOLD_ENEMY, S
 #define GOLD_SCORE_NUM 10
 #define GOLD_1UP 11
 enum {SCORE_TXT, HSCORE_TXT};
+enum {MTTXT_ON, MTTXT_OFF};
 typedef struct {
-        SDL_Texture *menu[5];
+        SDL_Texture *title_texts[5];
+        SDL_Texture *key_texts[10];
+        SDL_Texture *press_a_key;
+        SDL_Texture *volume_texts[3];
+        SDL_Texture *mute_texts[2];
+} Menu_Textures;
+
+typedef struct {
+        Menu_Textures menu_texts;
         SDL_Texture *texts[12];
         SDL_Texture *sprites[10];
         SDL_Texture *gold_numbers[12];
         SDL_Texture *white_numbers[10];
         SDL_Texture *white_letters[26];
         SDL_Texture *score_texts[2];
-        SDL_Texture *name_texts[3];
         SDL_Texture *leaderboard_texts[10];
         SDL_Texture *sparkle;
 } Textures;

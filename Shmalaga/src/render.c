@@ -18,7 +18,7 @@ const SDL_Rect boss_battle_rect = {640-250+10, 390-(390/2)-100, 500, 100};
 const SDL_Rect win_rect = {(1280 - 700) / 2, (720 - 100) / 2, 700, 100};
 
 void render(GameData *data, SDL_Renderer *rend, Assets *assets) {
-        D_START;
+        //D_START;
         if(!(data->secret & 0x01)) SDL_RenderClear(rend);
 
         //stars
@@ -32,17 +32,14 @@ void render(GameData *data, SDL_Renderer *rend, Assets *assets) {
 
         if(data->gamestate == STARTING_SCREEN) {
                 SDL_RenderCopy(rend, assets->textures.texts[TXT_START_SCREEN], NULL, &press_enter_rect);
-                D_PRINT("render starting screen");
                 SDL_RenderPresent(rend);
                 return;
         } else if(data->gamestate == NAME_ENTRY) {
                 render_name(data, rend, &assets->textures);
-                D_PRINT("render name");
                 SDL_RenderPresent(rend);
                 return;
         } else if(data->gamestate == LEADERBOARD) {
                 render_leaderboard(data->leaderboard, rend, &assets->textures, data->player_score_index);
-                D_PRINT("render leaderboard");
                 SDL_RenderPresent(rend);
                 return;
         }
@@ -102,7 +99,6 @@ void render(GameData *data, SDL_Renderer *rend, Assets *assets) {
                 SDL_RenderCopy(rend, assets->textures.texts[TXT_PRESSR], NULL, &pressr_rect);
         }
 
-        D_PRINT("render");
         switch(data->gamestate) {
                 case IN_GAME:
                                 SDL_RenderPresent(rend);
@@ -116,7 +112,8 @@ void render(GameData *data, SDL_Renderer *rend, Assets *assets) {
                 case CONTROLS:
                 case KEYSET_MODE:
                 case SOUND:
-                                render_menu(data, rend, assets->font, assets->textures.menu);
+                                render_menu(data, rend, &assets->textures.menu_texts);
+                                //D_PRINT("render menu");
                                 SDL_RenderPresent(rend);
                                 SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
                                 break;

@@ -39,18 +39,14 @@ typedef struct {
 } Color;
 
 typedef struct {
-        int master, music, sfx;
-} Volumes;
-
-typedef struct {
         SDL_Rect rect;
         Color color;
 } Star;
 
 typedef struct {
         SDL_Point point;
-        double angle;
-        double dx, dy;
+        float angle;
+        float dx, dy;
 } BB;
 
 typedef struct {
@@ -58,7 +54,7 @@ typedef struct {
         Uint8 status;
         Uint8 explosion_timeout;
 
-        double angle;
+        float angle;
         Uint8 circle;
         Uint8 passes;
 
@@ -78,22 +74,23 @@ typedef struct {
 typedef struct {
         SDL_Rect rect;
         Uint8 status;
-        unsigned new_exp_timeout;
-        unsigned explosion_timeout;
-        unsigned angles[5];
+        Uint16 new_exp_timeout;
+        Uint16 explosion_timeout;
+        Uint16 angles[5];
 
         Explosion explosions[NUM_EXP];
 
         Uint8 pattern;
-        Uint32 pattern_timeout;
+        Uint16 pattern_timeout;
         bool change;
 
         Uint8 bullet_timeout;
         Uint8 damage_timeout;
-        unsigned hp;
+        Uint16 hp;
 } Boss;
 
 enum {UP_K, DOWN_K, LEFT_K, RIGHT_K, SHOOT_K, SLOW_K, MENU_K, FSCREEN_K, MUTE_K, RESET_K};
+enum {VL_MASTER, VL_MUSIC, VL_SFX};
 typedef struct {
         SDL_Keycode keys[10]; //contains SDL_Scancodes too i guess this is polymorphism not really
 
@@ -102,7 +99,7 @@ typedef struct {
         bool fullscreen;
         bool muted;
 
-        Volumes volumes;
+        Uint8 volumes[3];
 
         const SDL_Keycode *sekritptr;
         Uint8 secret;
@@ -128,26 +125,22 @@ typedef struct {
         Uint8 player_death_timeout;
 
         SDL_Point gb[MAX_BULLETS];
-        size_t gb_count;
+        Uint8 gb_count;
         Uint8 bullet_timeout;
         Uint8 boss_bullet_timeout;
 
         Enemy enemies[MAX_ENEMIES];
-        unsigned enemy_count;
-        unsigned living_enemies;
+        Uint8 enemy_count;
+        Uint8 living_enemies;
 
         Sparkle sparkle;
         Enemy gold_enemy;
         Boss boss;
 
         BB bb[MAX_ENEMY_BULLETS];
-        size_t bb_count;
+        Uint8 bb_count;
 } GameData;
 
-// extern const SDL_Keycode lsd_code[10];
-// extern const SDL_Keycode big_code[10];
-// extern const SDL_Keycode tiny_code[10];
-// extern const SDL_Keycode lives_code[10];
 extern const SDL_Keycode *secret_codes[4];
 
 extern const SDL_Color white;

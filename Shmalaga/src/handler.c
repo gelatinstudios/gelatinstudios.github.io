@@ -70,10 +70,10 @@ int handler(GameData *data, WinRend *winrend, Assets *assets) {
                         }
                 }
 
-                if(data->gamestate == NAME_ENTRY) name_handler(data, winrend->rend, assets->font, &event, assets->textures.leaderboard_texts);
+                if(data->gamestate == NAME_ENTRY) name_handler(data, winrend->rend, assets->font, &event, assets->textures.leaderboard_texts, assets->textures.score_texts);
                 else if(data->gamestate == LEADERBOARD) {
                         if(pressed == SDLK_RETURN) reset(data, assets->sounds.main_music);
-                } else if(data->gamestate >= MENU) quit |= menu_handler(data, assets->sounds.sfx, &event);
+                } else if(data->gamestate >= MENU) quit |= menu_handler(data, winrend->rend, &assets->textures.menu_texts, assets->sounds.sfx, assets->font, &event);
                 else if(data->gamestate == STARTING_SCREEN) {
                         if(data->selected == 10) data->secret |= data->secret >> 4;
 

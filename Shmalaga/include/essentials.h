@@ -69,25 +69,42 @@ typedef struct {
         Assets *assets;
 } Everything;
 
+//intro.c
 int intro(Star *, SDL_Renderer *, TTF_Font *);
 
+//handler.c
 int handler(GameData *, WinRend *, Assets *);
 
-int menu_handler(GameData *, Mix_Chunk *[], SDL_Event *);
-void render_menu(GameData *, SDL_Renderer *, TTF_Font *, SDL_Texture *[]);
+//textures.c
+SDL_Texture *make_leaderboard_text(SDL_Renderer *rend, TTF_Font *font, const Score *score, const size_t n);
+SDL_Texture *make_score_text(SDL_Renderer *rend, TTF_Font *font, unsigned score);
+SDL_Texture *make_highscore_text(SDL_Renderer *rend, TTF_Font *font, unsigned score);
+SDL_Texture *make_key_text(SDL_Renderer *rend, TTF_Font *font, const char *action, const char *keyname);
+SDL_Texture *make_volume_text(SDL_Renderer *rend, TTF_Font *font, const char *barname, int volume);
 
+//menu.c
+int menu_handler(GameData *data, SDL_Renderer *rend, Menu_Textures *texts, Mix_Chunk *sfx[], TTF_Font *font, SDL_Event *event);
+void render_menu(GameData *data, SDL_Renderer *rend, Menu_Textures *texts);
+
+//levels.c
 void load_level(GameData *);
 
+//automata.c
 void automata(GameData *, Sounds *sounds);
 
+//update.c
 void update(GameData *data, SDL_Renderer *rend, Sounds *sounds, SDL_Texture **score_text, TTF_Font *font);
 
+//render.c
 void render(GameData *, SDL_Renderer *, Assets *);
 
-void name_handler(GameData *, SDL_Renderer *,TTF_Font *, SDL_Event*, SDL_Texture *[10]);
+//leaderboard.c
+void name_handler(GameData *, SDL_Renderer *,TTF_Font *, SDL_Event*, SDL_Texture *[10], SDL_Texture *[2]);
 void render_name(GameData *, SDL_Renderer *, Textures *);
 void render_leaderboard(Score[], SDL_Renderer *, Textures *, size_t);
 
+//clean.c
 void clean(WinRend *, Assets *);
+
 
 #endif
