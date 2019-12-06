@@ -90,10 +90,7 @@ int menu_handler(GameData *data, SDL_Renderer *rend, Menu_Textures *texts, Mix_C
                 case SOUND: {
                         switch(event->key.keysym.sym) {
                                 case SDLK_RETURN:       if(data->selected == 3) {
-                                                                //FIX: music starts playing in the menu; it shouldn't
                                                                 data->muted = !data->muted;
-                                                                if(data->muted) Mix_PauseMusic();
-                                                                else Mix_ResumeMusic();
                                                         } else if(data->selected == 4) {
                                                                 data->selected = 0;
                                                                 data->gamestate = MENU;

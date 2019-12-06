@@ -51,7 +51,8 @@ int handler(GameData *data, WinRend *winrend, Assets *assets) {
                         } else if(pressed == data->keys[MUTE_K]) {
                                 data->muted = !data->muted;
                                 if(data->muted) Mix_PauseMusic();
-                                else Mix_ResumeMusic();
+                                else if(data->gamestate == IN_GAME || data->gamestate == YOU_WIN)
+                                        Mix_ResumeMusic();
                         } else if(pressed == data->keys[FSCREEN_K]) {
                                 //data->gamestate = PAUSED;
                                 SDL_SetWindowFullscreen(winrend->win, data->fullscreen ? 0 : SDL_WINDOW_FULLSCREEN);

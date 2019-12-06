@@ -13,6 +13,7 @@ void name_handler(GameData *data, SDL_Renderer *rend, TTF_Font *font, SDL_Event 
                                                 score_texts[HSCORE_TXT] = make_highscore_text(rend, font, data->score.val);
                                         }
                                         data->player_score_index = scores_update(data->leaderboard, data->score, rend, font, texts);
+                                        print_scores(data->leaderboard);
                                         SDL_DestroyTexture(score_texts[SCORE_TXT]);
                                         score_texts[SCORE_TXT] = make_score_text(rend, font, 0);
                                         data->gamestate = LEADERBOARD;
